@@ -1,2 +1,2 @@
 # Tavern-Brawl
-C++ console driven game
+C++ console driven game made for practicing different programming in this language.
