@@ -10,12 +10,12 @@ using namespace std;
 string rollIntro(); //game starting function
 int chooseOpponent(); //choosing a worthy opponent
 void chooseWeapon(); // choosing a random weapon function
-void fight(entity player, entity enemy); //fighting function
+void fight(entity *player, entity *enemy); //fighting function
 void attack(); //player attack function
 void defend(); //player defend function
-void rest(entity player); //player rest function
+void rest(entity *player); //player rest function
 void run(); //player running function
-void enemyAttack(entity player, entity enemy); //enemy attack function
+void enemyAttack(entity *player, entity *enemy); //enemy attack function
 
 int main()
 {
@@ -41,13 +41,13 @@ int main()
     switch(opponentChoice)
     {
         case 1:
-            fight(player, goblin);
+            fight(&player, &goblin);
             break;
         case 2:
-            fight(player, human);
+            fight(&player, &human);
             break;
         case 3:
-            fight(player, troll);
+            fight(&player, &troll);
             break;
         default:
             cout<<"\n Invalid choice, please choose between 1, 2 or 3 !"<<endl;
@@ -92,15 +92,15 @@ void chooseWeapon()
     fileObj.close();
 }
 
-void fight(entity player, entity enemy)
+void fight(entity *player, entity *enemy)
 {
-    cout<<"You have chosen to fight the "<<enemy.getName()<<endl;
-    enemy.seeEnemy();
+    cout<<"You have chosen to fight the "<<enemy->getName()<<endl;
+    enemy->seeEnemy();
     cout<<"The fight begins"<<endl;
     bool fighting=true;
     while (fighting)
     {
-        player.seeStats();
+        player->seeStats();
         cout<<"What do you do ?"<<endl;
         cout<<"1. Attack !"<<endl;
         cout<<"2. Defend !"<<endl;
@@ -112,7 +112,7 @@ void fight(entity player, entity enemy)
         {
             case 1:
                 //attack();
-                enemyAttack(player,enemy);
+                enemyAttack(player, enemy);
                 break;
             case 2:
                 //defend();
@@ -130,16 +130,16 @@ void fight(entity player, entity enemy)
     }
 }
 
-void rest(entity player) //does not modify health & stamina in class.
+void rest(entity *player) //does not modify health & stamina in class.
 {
     int healthAmount=1+(rand()%5);
     int staminaAmount=1+(rand()%5);
     cout<<"You recovered "<<healthAmount<<" health & "<<staminaAmount<<" stamina !"<<endl;
-    int newHealth=player.health+healthAmount;
-    int newStamina=player.stamina+staminaAmount;
-    player.setHealth(newHealth);
-    player.setStamina(newStamina);
-    player.seeStats();
+    int newHealth=player->health+healthAmount;
+    int newStamina=player->stamina+staminaAmount;
+    player->setHealth(newHealth);
+    player->setStamina(newStamina);
+    player->seeStats();
 }
 
 void run()
@@ -148,21 +148,21 @@ void run()
     cout<<">>> BAD ENDING <<<"<<endl;
 }
 
-void enemyAttack(entity player, entity enemy) ////does not modify health of player in class.
+void enemyAttack(entity *player, entity *enemy) ////does not modify health of player in class.
 {
     int critChance=1+(rand()%2);
     int newDmg=0;
     if (critChance==1)
     {
         cout<<"It's a critical hit !"<<endl;
-        newDmg=enemy.damage*2;
+        newDmg=enemy->damage*2;
     }
     else
     {
-        newDmg=enemy.damage;
+        newDmg=enemy->damage;
     }
-    cout<<"The "<<enemy.getName()<<" dealt to you "<<newDmg<<" !"<<endl;
-    int newHealth=player.health-newDmg;
-    player.setHealth(newHealth);
-    player.seeStats();
+    cout<<"The "<<enemy->getName()<<" dealt to you "<<newDmg<<" !"<<endl;
+    int newHealth=player->health-newDmg;
+    player->setHealth(newHealth);
+    player->seeStats();
 }
