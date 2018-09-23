@@ -41,7 +41,6 @@ void entity::seeEnemy()
 void entity::setHealth(int h)
 {
     this->health=h;
-    cout<<this->health;
 }
 
 void entity::setStamina(int s)
