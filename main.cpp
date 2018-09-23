@@ -11,11 +11,14 @@ string rollIntro(); //game starting function
 int chooseOpponent(); //choosing a worthy opponent
 void chooseWeapon(); // choosing a random weapon function
 void fight(entity *player, entity *enemy); //fighting function
-void attack(); //player attack function
-void defend(); //player defend function
+void attack(entity *player, entity *enemy); //player attack function
+void defend(entity *player, entity *enemy); //player defend function
 void rest(entity *player); //player rest function
 void run(); //player running function
 void enemyAttack(entity *player, entity *enemy); //enemy attack function
+void goodOutro(); // in case enemy dies;
+void badOutro(); // in case player dies;
+void credits(); // ending credits;
 
 int main()
 {
@@ -100,41 +103,58 @@ void fight(entity *player, entity *enemy)
     bool fighting=true;
     while (fighting)
     {
-        player->seeStats();
-        cout<<"What do you do ?"<<endl;
-        cout<<"1. Attack !"<<endl;
-        cout<<"2. Defend !"<<endl;
-        cout<<"3. Rest !"<<endl;
-        cout<<"4. RUN !"<<endl;
-        int choice;
-        cin>>choice;
-        switch(choice)
+        if(player->health<=0)
         {
-            case 1:
-                //attack();
-                enemyAttack(player, enemy);
-                break;
-            case 2:
-                //defend();
-                break;
-            case 3:
-                rest(player);
-                break;
-            case 4:
-                run();
-                fighting=false;
-                break;
-            default:
-                cout<<"\n Invalid choice, choose 1, 2, 3 or 4 !"<<endl;
+            badOutro();
+            fighting=false;
+        }
+        else if(enemy->health<=0)
+        {
+            goodOutro();
+            fighting=false;
+        }
+        else
+        {
+            cout<<"What do you do ?"<<endl;
+            cout<<"1. Attack !"<<endl;
+            cout<<"2. Defend !"<<endl;
+            cout<<"3. Rest !"<<endl;
+            cout<<"4. RUN !"<<endl;
+            int choice;
+            cin>>choice;
+            switch(choice)
+            {
+                case 1:
+                    cout<<"\nYour TURN"<<endl;
+                    attack(player, enemy);
+                    cout<<"\nEnemy's TURN"<<endl;
+                    enemyAttack(player, enemy);
+                    break;
+                case 2:
+                    defend(player, enemy);
+                    break;
+                case 3:
+                    cout<<"\nYour TURN"<<endl;
+                    rest(player);
+                    cout<<"\nEnemy's TURN"<<endl;
+                    defend(player, enemy);
+                    break;
+                case 4:
+                    run();
+                    fighting=false;
+                    break;
+                default:
+                    cout<<"\n Invalid choice, choose 1, 2, 3 or 4 !"<<endl;
+            }
         }
     }
 }
 
-void rest(entity *player) //does not modify health & stamina in class.
+void rest(entity *player)
 {
     int healthAmount=1+(rand()%5);
     int staminaAmount=1+(rand()%5);
-    cout<<"You recovered "<<healthAmount<<" health & "<<staminaAmount<<" stamina !"<<endl;
+    cout<<"\nYou recovered "<<healthAmount<<" health & "<<staminaAmount<<" stamina !"<<endl;
     int newHealth=player->health+healthAmount;
     int newStamina=player->stamina+staminaAmount;
     player->setHealth(newHealth);
@@ -145,12 +165,12 @@ void rest(entity *player) //does not modify health & stamina in class.
 void run()
 {
     cout<<"You leg it like a coward..."<<endl;
-    cout<<">>> BAD ENDING <<<"<<endl;
+    cout<<">>> COWARD ENDING <<<"<<endl;
 }
 
-void enemyAttack(entity *player, entity *enemy) ////does not modify health of player in class.
+void enemyAttack(entity *player, entity *enemy)
 {
-    int critChance=1+(rand()%2);
+    int critChance=1+(rand()%5);
     int newDmg=0;
     if (critChance==1)
     {
@@ -161,8 +181,73 @@ void enemyAttack(entity *player, entity *enemy) ////does not modify health of pl
     {
         newDmg=enemy->damage;
     }
-    cout<<"The "<<enemy->getName()<<" dealt to you "<<newDmg<<" !"<<endl;
+    cout<<"The "<<enemy->getName()<<" dealt to you "<<newDmg<<" damage !"<<endl;
     int newHealth=player->health-newDmg;
     player->setHealth(newHealth);
     player->seeStats();
+}
+
+void attack(entity *player, entity *enemy)
+{
+    int critChance=1+(rand()%3);
+    int newDmg=0;
+    if (critChance==1)
+    {
+        cout<<"\nIt's a critical hit !"<<endl;
+        newDmg=player->damage*2;
+    }
+    else
+    {
+        newDmg=player->damage;
+    }
+    cout<<player->getName()<<" dealt to the enemy "<<newDmg<<" damage !"<<endl;
+    int newHealth=enemy->health-newDmg;
+    enemy->setHealth(newHealth);
+    enemy->seeEnemy();
+}
+
+void defend(entity *player, entity *enemy)
+{
+    int chance=1+(rand()%5);
+    if (chance==1)
+    {
+        cout<<"\nYou tried to defend, but managed to escape the attack instead, nice !"<<endl;
+        player->seeStats();
+    }
+    else if (chance==2)
+    {
+        cout<<"\nYou managed to defend yourself and parry the strike"<<endl;
+        player->seeStats();
+    }
+    else
+    {
+        cout<<"\nYou defended yourself but the enemy attack was too strong"<<endl;
+        cout<<"You lost "<<enemy->damage/2<<" health"<<endl;
+        player->health-=enemy->damage/2;
+        player->seeStats();
+    }
+}
+
+void goodOutro()
+{
+    cout<<"\n\n\nCongrats, you won the Tavern Brawl !"<<endl;
+    cout<<">>> GAME OVER <<<"<<endl;
+    cout<<">>> HERO ENDING <<<"<<endl;
+    credits();
+}
+
+void badOutro()
+{
+    cout<<"\n\n\nWow, you are bad, you lost the Tavern Brawl !"<<endl;
+    cout<<">>> GAME OVER <<<"<<endl;
+    cout<<">>> DEAD MAN ENDING <<<"<<endl;
+    credits();
+}
+
+void credits()
+{
+    cout<<"\nThank you for playing Tavern Brawl !"<<endl;
+    cout<<"This game was made in a bunch of hours by a lonely person"<<endl;
+    cout<<"Special thanks to DeusProx"<<endl;
+    cout<<"You can leave now, bye !"<<endl;
 }
