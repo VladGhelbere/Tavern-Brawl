@@ -126,7 +126,10 @@ void fight(entity *player, entity *enemy)
             {
                 case 1:
                     cout<<"\nYour TURN"<<endl;
-                    attack(player, enemy);
+                    if(player->stamina>=1)
+                        attack(player, enemy);
+                    else
+                        cout<<"\nYou do not have enough stamina to attack"<<endl;
                     cout<<"\nEnemy's TURN"<<endl;
                     enemyAttack(player, enemy);
                     break;
@@ -194,10 +197,12 @@ void attack(entity *player, entity *enemy)
     if (critChance==1)
     {
         cout<<"\nIt's a critical hit !"<<endl;
+        player->stamina-=2;
         newDmg=player->damage*2;
     }
     else
     {
+        player->stamina-=1;
         newDmg=player->damage;
     }
     cout<<player->getName()<<" dealt to the enemy "<<newDmg<<" damage !"<<endl;
@@ -246,8 +251,8 @@ void badOutro()
 
 void credits()
 {
-    cout<<"\nThank you for playing Tavern Brawl !"<<endl;
+    cout<<"\n\n\n\n\n\n\nThank you for playing Tavern Brawl !"<<endl;
     cout<<"This game was made in a bunch of hours by a lonely person"<<endl;
     cout<<"Special thanks to DeusProx"<<endl;
-    cout<<"You can leave now, bye !"<<endl;
+    cout<<"You can leave now, bye !\n\n\n\n\n"<<endl;
 }
